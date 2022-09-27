@@ -1,0 +1,22 @@
+Flask == 2.0.3
+Flask_Bootstrap
+Flask_Mail
+Flask_SocketIO
+Flask_SQLAlchemy
+Flask_Session
+Flask_SocketIO
+Flask_WTF
+WTForms
+MarkupSafe
+SQLAlchemy==1.4.7
+Werkzeug
+
+Stripe
+
+email_validator
+psycopg2
+itsdangerous
+Jinja2
+eventlet==0.30.2
+gunicorn==20.1.0
+gevent-websocket
