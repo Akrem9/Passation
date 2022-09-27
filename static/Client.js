@@ -18,7 +18,7 @@ class communicator{
 
 
         socket.on('updateState',function(data){
-            console.log("udate SOcket Came")
+            //console.log("udate SOcket Came")
             let i = data['line']
             let x = data['row']
             if (data['state']==false){
@@ -34,7 +34,7 @@ class communicator{
         });
         
         socket.on('updateNote',function(data){
-            console.log('updating Note')
+            //console.log('updating Note')
             let i = data['line'];
             let x = data['row'];
             document.getElementById("note"+i+x).innerHTML=data['content'];
@@ -116,13 +116,13 @@ function total_draw(dataStream){
             
             try{
                 Note.innerHTML = dataStream[i+','+x]['Note'];
-                console.log(Note.innerHTML);
-                console.log(typeof(Note.innerHTML));
+                //console.log(Note.innerHTML);
+                //console.log(typeof(Note.innerHTML));
             }
             catch{
 
             }
-            console.log(box);
+            //console.log(box);
             box.appendChild(signal);
             box.appendChild(mch_name);
             box.appendChild(Note);
@@ -130,7 +130,8 @@ function total_draw(dataStream){
             document.getElementById('Line'+i).appendChild(box);
             //REd and green UI
             try{
-                console.log(dataStream[i+','+x]['State']);
+                //
+                //console.log(dataStream[i+','+x]['State']);
                 if(dataStream[i+','+x]['State']==false){
                     var red_alert = display_red(i,x,box);
                     box.appendChild(red_alert);
@@ -195,7 +196,7 @@ function display_red(i,x){
     $("#box"+i+x).css("background-color","rgb(192, 80, 89)");  
 
 
-    console.log("box"+i+x);  
+    //console.log("box"+i+x);  
     var red_alert = document.createElement("div");
     red_alert.setAttribute("class","Alert");
     red_alert.setAttribute("id","Warning"+i+x);
@@ -207,7 +208,7 @@ function display_green(i,x){
     $("#signal"+i+x).css("background-color","rgb(74, 164, 74)");
     $("#box"+i+x).css("background-color","rgb(47, 61, 74)");  
 
-    console.log("box"+i+x);
+    //console.log("box"+i+x);
     var Checked = document.createElement("div");
     Checked.setAttribute("class","Alert");
     Checked.setAttribute("id","Warning"+i+x);
