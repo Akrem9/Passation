@@ -13,8 +13,18 @@
     <link rel="stylesheet" href= "{{ url_for('static',filename='styles/style.css') }}">
     <script src="{{url_for('static',filename='Client.js')}}"></script>
     <body>
-        <div id="Line1" class="line">Ligne 1</div>
+        <div id="headDate" class="Date">
+            {% if datenow %}
+            {{ datenow }}   
+            {% endif %}
+        </div>
+
+        <div id="Line1" class="line">Ligne 3</div>
         <div id="Line2" class="line">Ligne 2</div>
-        <div id="Line3" class="line">Ligne 3</div>
+        <div id="Line3" class="line">Ligne 1</div>
+        <div id="Line4" class="line" style="display: none;"></div>
+        <div id="Line5" class="line" style="display: none;"></div>
+
+
 </body>
 </html>

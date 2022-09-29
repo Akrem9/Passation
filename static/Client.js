@@ -11,7 +11,22 @@ class communicator{
 
     };
     listen(){
+        socket.on('machinHistory',function(data){
+            console.log(data);
+            $(".Date").hide()
+            $(".line").hide();
+            draw_History(data);
+            $("#Line5").show();
+
+        })
         socket.on('bootData',function(dataStream){
+            $(".box").remove();
+            $(".line").show();
+            $(".Date").show();
+            $("#Line4").hide();
+            $("#Line5").hide();
+            $("#Rewind").remove();
+
             global_tst = dataStream;
             total_draw(dataStream);
         });
@@ -44,6 +59,28 @@ class communicator{
             catch{}
         })
 
+        socket.on("datelist",function(data){
+            $("#Rewind").remove();
+            $(".line").hide();
+            $(".Date").hide();
+            for(let i = 0 ; i<data.length;i++ ){
+                var dateBox = document.createElement("div");
+                dateBox.setAttribute("class","Datelist")
+                dateBox.setAttribute("id",data[i])
+
+                dateBox.innerHTML = data[i];
+                document.getElementById("Line4").appendChild(dateBox);
+                $("#"+data[i]).click(function(){
+                    socket.emit("updateFromDate",data[i]);
+                    $(".Datelist").remove();
+                    $(".box").remove();
+                    document.getElementById("headDate").innerHTML = data[i];
+
+                });
+            }
+            $("#Line4").show();
+            console.log(data);
+        })
 
 
 
@@ -56,6 +93,12 @@ class communicator{
                 $('*').blur();
             }
         });
+
+        $(".Date").click(function(){
+            socket.emit("listDates");
+        });
+
+
     };
 
     display_indiv(data){
@@ -63,7 +106,83 @@ class communicator{
     };
         
 }
+function draw_History(dataStream){
+    document.getElementById("Line5").innerHTML = dataStream['Reference'];
+    for (let x = 0;x < dataStream['count'];x++){
+        var Rewind = document.createElement("div");
+            Rewind.setAttribute("id","Rewind");
 
+        var box = document.createElement("div")
+            box.setAttribute('class','box');
+            box.setAttribute('id',"box"+5+x);
+
+            var mch_name = document.createElement("div");
+            mch_name.setAttribute("class","machineName");
+            mch_name.setAttribute("id","machineName"+5+x);
+
+            mch_name.innerHTML = dataStream[x]['Date'];
+            
+  
+
+            var signal = document.createElement("div");
+            signal.setAttribute("class","signal");
+            signal.setAttribute("id","signal"+5+x);
+
+
+
+            var Note = document.createElement("div");
+            Note.setAttribute("class","note");
+            Note.setAttribute("id","note"+5+x);
+            Note.setAttribute("row",x);
+
+            
+            try{
+                Note.innerHTML = dataStream[x]['Note'];
+                //console.log(Note.innerHTML);
+                //console.log(typeof(Note.innerHTML));
+            }
+            catch{
+
+            }
+            //console.log(box);
+            box.appendChild(signal);
+            box.appendChild(mch_name);
+
+            box.appendChild(Note);
+            document.getElementById('Line'+5).appendChild(box);
+            //REd and green UI
+            try{
+                //
+                //console.log(dataStream[i+','+x]['State']);
+                if(dataStream[x]['State']==false){
+                    var red_alert = display_red(5,x,box);
+                    box.appendChild(red_alert);
+
+                }
+                else
+                if(dataStream[x]['State']==true){
+                    var Checked = display_green(5,x,box);
+                    box.appendChild(Checked);
+
+                }
+            }
+            catch{
+
+            }
+            //Note on hover if not empty scale up
+           // try{
+             //   setupNoteBehav(dataStream[x]['Note'],5,x,dataStream[x]['State']);
+           // }
+            //catch{}
+            try{setup_behavior(dataStream['Reference'],5,x,dataStream);}
+            catch{}
+    }
+    document.body.appendChild(Rewind);
+    $("#Rewind").click(function(){
+        bootRequest();
+    });
+
+}
 
 function total_draw(dataStream){
     for (let i = 1; i < 4 ; i ++){
@@ -72,6 +191,10 @@ function total_draw(dataStream){
             box.setAttribute('class','box');
             box.setAttribute('id',"box"+i+x);
 
+            var buttonhist = document.createElement("div");
+            buttonhist.setAttribute("class","buttonHist");
+            buttonhist.setAttribute("id","buttonHist"+i+x);
+
             var mch_name = document.createElement("div");
             mch_name.setAttribute("class","machineName");
             mch_name.setAttribute("id","machineName"+i+x);
@@ -79,7 +202,7 @@ function total_draw(dataStream){
                 mch_name.innerHTML = dataStream[i+','+x]['Reference'];
             }
             catch{
-                mch_name.innerHTML = "------";
+                mch_name.innerHTML = "----";
             }
 
             var signal = document.createElement("div");
@@ -123,8 +246,10 @@ function total_draw(dataStream){
 
             }
             //console.log(box);
+            box.appendChild(buttonhist);
             box.appendChild(signal);
             box.appendChild(mch_name);
+
             box.appendChild(Note);
             box.appendChild(Buttons);
             document.getElementById('Line'+i).appendChild(box);
@@ -154,8 +279,10 @@ function total_draw(dataStream){
             catch{}
             try{setup_behavior(dataStream[i+','+x]['Reference'],i,x,dataStream);}
             catch{}
-
-
+            //Loadhistory to Line 5 of History
+            $("#buttonHist"+i+x).click(function(){
+                socket.emit("machHistory",{'line':i,'row':x});
+            });
         }
     }
 }
@@ -182,6 +309,9 @@ function setupNoteBehav(Note,i,x,State){
                 $(this).css('z-index',0);
             });
            }) 
+        }
+        else{
+            $("#note"+i+x).on("mouseover",function(){$(this).css({transform:"scale(1)"});})
         }
             $("#signal"+i+x).css("background-color","rgb(153, 153, 0)");  
         if (State==true ){

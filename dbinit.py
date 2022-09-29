@@ -37,6 +37,12 @@ class problem(db.Model):
 
     MState = db.relationship('machine_state', backref='problem')
 
+class Date(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    DailyDate = db.Column(db.Date)
+
+
+
 def setState(reference,state,date):
     print(state)
     id = machine.query.filter_by(reference=reference).first().id
@@ -65,3 +71,9 @@ def daily_db_creation(datenow,machines):
         db.session.add(new_state)
         db.session.commit()
     return 0
+
+def add_to_date(datenow):
+    datenow = datetime.strptime(datenow,'%Y-%m-%d')
+    A = Date(DailyDate=datenow)
+    db.session.add(A)
+    db.session.commit()

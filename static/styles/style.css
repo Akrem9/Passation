@@ -3,9 +3,8 @@ body{
     text-align: center;
     justify-content: center;
     background-position: fixed;
-
-
 }
+
 .line{
     transition: 0.3s;
     opacity: 30%;
@@ -19,6 +18,7 @@ body{
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     color: rgb(137, 173, 207);
 }
+
 .line:hover{
     top: 0%;
     transition: 1s;
@@ -26,12 +26,14 @@ body{
     height: 100%;
     opacity: 100%;
 }
+
 #verification{
     margin-top: 10%;
     text-align: center;
     width: 100%;
     display: block;
 }
+
 .message{
     background-color: rgb(15, 13, 34);
     color: rgb(255, 110, 110);
@@ -54,6 +56,7 @@ body{
 .box:hover{
     opacity: 100%;
 }
+
 .machineName{
     border-color: rgb(42, 6, 6);
     justify-content: center;
@@ -73,6 +76,7 @@ body{
     width: 7%;
     display: inline-block;
 }
+
 .okBut{
     border-style: none;
     overflow: hidden;
@@ -81,14 +85,17 @@ body{
     font-size: 100%;
     background-color: rgb(12, 60, 96);
 }
+
 .okBut:hover{
     cursor: pointer;
     background-color: rgb(23, 75, 130);
 }
+
 .notBut:hover{
     cursor: pointer;
     background-color: rgb(130, 50, 126);
 }
+
 .notBut{
     
     border-style: none;
@@ -102,7 +109,7 @@ body{
 .note{
     z-index: 10;
     color: rgb(0, 0, 0);
-    font-size: 7.5px;
+    font-size:10px;
     border-style: solid;
     border-color: darkgreen;
     border-radius: 5px; 
@@ -116,6 +123,7 @@ body{
 }
 
 .note:hover{
+    cursor: pointer;
     position: relative;
     z-index: 1;
     background-color: white;
@@ -125,4 +133,77 @@ body{
     display:inline-flex;
     height: 5px;
     width: 10%;
+}
+
+.buttonHist{
+    background-image: url("/static/images/Historique.png");
+    background-size: 15px;
+    display: inline-block;
+
+    margin-left:2%;
+    width: 15px;
+    height: 15px;
+    transition: 0.3s;
+
+}
+
+.buttonHist:hover{
+    border-radius: 5%;
+    background-color:rgb(84, 97, 125) ;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.Date{
+    margin-left: 45%;
+    border-color: rgb(2, 7, 29);
+    width: 10%;
+    border-style: solid;
+    display: block;
+    color: rgb(150, 154, 175);
+    font-size: large;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.Date:hover{
+    cursor: pointer;
+    border-style: bold;
+    border-radius: 10%;
+    border-color: rgb(121, 138, 168);
+    border-width: 2px;
+
+
+}
+.Datelist{
+    margin-left: 25%;
+    border-color: rgb(2, 7, 29);
+    width: 50%;
+    border-style: solid;
+    display: block;
+    color: rgb(150, 154, 175);
+    font-size: large;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; 
+}
+
+.Datelist:hover{
+    cursor: pointer;
+    border-style: bold;
+    border-radius: 10%;
+    border-color: rgb(121, 138, 168);
+    border-width: 2px;
+
+}
+
+#Rewind{
+    cursor: pointer;
+    transition: 0.5s;
+    width: 50px;
+    height: 50px;
+    background-size: 50px;
+
+    background-image: url("/static/images/Rewind.png");
+}
+#Rewind:hover{
+    background-color: rgb(123, 129, 158);
+    transition: 0.5s;
 }
