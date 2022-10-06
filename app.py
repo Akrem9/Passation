@@ -1,16 +1,12 @@
-from markupsafe import escape
 from flask import Flask,render_template,session,redirect,url_for,request,send_from_directory
 from flask_session import Session
 from flask_socketio import SocketIO, emit, send
-from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, DateField, SelectField
 from wtforms.validators import InputRequired, Email, Length
-from flask_sqlalchemy import SQLAlchemy
 from dbinit import *
 from flask import flash
-from flask_mail import Mail,Message
-from werkzeug.security import generate_password_hash, check_password_hash
+
 from datetime import datetime
 
 
