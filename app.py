@@ -1,4 +1,4 @@
-from flask import Flask,render_template,session,redirect,url_for,request,send_from_directory
+from flask import render_template,session,redirect,url_for,request,send_from_directory
 from flask_session import Session
 from flask_socketio import SocketIO, emit, send
 from flask_wtf import FlaskForm
