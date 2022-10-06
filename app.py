@@ -16,7 +16,7 @@ from datetime import datetime
 
 
 app = Flask(__name__)
-app.config['DEBUG'] = True
+app.config['DEBUG'] = False
 app.config['SECRET_KEY'] = 'mysecret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SESSION_TYPE'] = 'filesystem'
