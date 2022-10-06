@@ -40,7 +40,12 @@ class communicator{
                 display_red(i,x);
             }
             else{
-                display_green(i,x);
+                if(data['state']==true){
+                    display_green(i,x);
+                }
+                else{
+                    display_grey(i,x);
+                }
                 try{
                     setupNoteBehav(dataStream[i+','+x]['Note'],i,x);
                 }
@@ -208,24 +213,35 @@ function total_draw(dataStream){
             var signal = document.createElement("div");
             signal.setAttribute("class","signal");
             signal.setAttribute("id","signal"+i+x);
-            
-            var Okbutton = document.createElement("button");
-            Okbutton.setAttribute("class","okBut");
-            Okbutton.setAttribute("id","Ok"+i+x);
-            Okbutton.innerHTML = "Ok";
-
-            var Notbutton = document.createElement("button");
-            Notbutton.setAttribute("class","notBut");
-            Notbutton.setAttribute("id","notBut"+i+x);
-            Notbutton.innerHTML = "Not";
-
-
             var Buttons = document.createElement("div");
-            Buttons.setAttribute("class","buttons");
-            Buttons.setAttribute("id","buttons"+i+x);
 
-            Buttons.appendChild(Okbutton);
-            Buttons.appendChild(Notbutton);
+            try{
+                if(dataStream[i+','+x]['edit']==true){
+                    var Okbutton = document.createElement("button");
+                    Okbutton.setAttribute("class","okBut");
+                    Okbutton.setAttribute("id","Ok"+i+x);
+                    Okbutton.innerHTML = "Ok";
+        
+                    var Notbutton = document.createElement("button");
+                    Notbutton.setAttribute("class","notBut");
+                    Notbutton.setAttribute("id","notBut"+i+x);
+                    Notbutton.innerHTML = "Not";
+        
+                    var PF = document.createElement("button");
+                    PF.setAttribute("class","PF");
+                    PF.setAttribute("id","PF"+i+x);
+                    PF.innerHTML = "PF";
+        
+                    Buttons.setAttribute("class","buttons");
+                    Buttons.setAttribute("id","buttons"+i+x);
+        
+                    Buttons.appendChild(Okbutton);
+                    Buttons.appendChild(Notbutton);
+                    Buttons.appendChild(PF);
+                }
+                 }
+                catch{}
+
 
 
 
@@ -234,8 +250,14 @@ function total_draw(dataStream){
             Note.setAttribute("id","note"+i+x);
             Note.setAttribute("line",i);
             Note.setAttribute("row",x);
-            Note.setAttribute("contenteditable","true");
 
+            try{
+            if(dataStream[i+','+x]['edit']==true){
+                console.log(dataStream[i+','+x]['edit'])
+                Note.setAttribute("contenteditable","true");
+            }
+             }
+            catch{}
             
             try{
                 Note.innerHTML = dataStream[i+','+x]['Note'];
@@ -266,7 +288,9 @@ function total_draw(dataStream){
                 if(dataStream[i+','+x]['State']==true){
                     var Checked = display_green(i,x,box);
                     box.appendChild(Checked);
-
+                }else{
+                    var Checked = display_grey(i,x);
+                    box.appendChild(Checked);
                 }
             }
             catch{
@@ -289,15 +313,25 @@ function total_draw(dataStream){
 function setup_behavior(reference,i,x,box,dataStream){
     $("#Ok"+i+x).click(function(){
         socket.emit("stateChange",{'state':true,'reference':reference,'line':i,'row':x});
+        $("#note"+i+x).focus();
+
     });
     $("#notBut"+i+x).click(function(){
         socket.emit("stateChange",{'state':false,'reference':reference,'line':i,'row':x});
+        $("#note"+i+x).focus();
+
     });
 
+    $("#PF"+i+x).click(function(){
+        socket.emit("stateChange",{'state':null,'reference':reference,'line':i,'row':x});
+        $("#note"+i+x).focus();
+    });
 }
 function setupNoteBehav(Note,i,x,State){
     try{
         if (Note.length!=0){
+            $("#box"+i+x).css("opacity","100%");
+
            $("#note"+i+x).on("mouseover",function(){
             $(this).css({transform:"scale(1.9)"});
             $(this).css({position:"relative"});
@@ -313,17 +347,21 @@ function setupNoteBehav(Note,i,x,State){
         else{
             $("#note"+i+x).on("mouseover",function(){$(this).css({transform:"scale(1)"});})
         }
-            $("#signal"+i+x).css("background-color","rgb(153, 153, 0)");  
         if (State==true ){
-            $("#signal"+i+x).css("background-color","rgb(153, 153, 0)");  
+            $("#signal"+i+x).css("background-color","rgb(153, 153, 0)");
+        }
+        if (State==null){
+            display_grey(i,x);
         }
 }
     catch{}
 }
 
 function display_red(i,x){
+
     $("#signal"+i+x).css("background-color","rgb(192, 80, 89)");  
     $("#box"+i+x).css("background-color","rgb(192, 80, 89)");  
+    $("#box"+i+x).css("opacity","100%");
 
 
     //console.log("box"+i+x);  
@@ -333,8 +371,21 @@ function display_red(i,x){
 
     return red_alert;
 }
+function display_grey(i,x){
+    $("#box"+i+x).css("background-color","rgb(47, 61, 74)");  
+    $("#signal"+i+x).css("opacity","0%");
+    $("#box"+i+x).css("opacity","30%");
+    if(document.getElementById("note"+i+x).innerHTML.length > 0){
+        $("#signal"+i+x).css("background-color","rgb(153, 153, 0)");
+        $("#box"+i+x).css("opacity","100%");
+        $("#signal"+i+x).css("opacity","100%");
+        $("#box"+i+x).css("background-color","rgb(77, 80, 90)");  
+
+    }
+}
 
 function display_green(i,x){
+    $("#box"+i+x).css("opacity","55%");
     $("#signal"+i+x).css("background-color","rgb(74, 164, 74)");
     $("#box"+i+x).css("background-color","rgb(47, 61, 74)");  
 
@@ -342,6 +393,8 @@ function display_green(i,x){
     var Checked = document.createElement("div");
     Checked.setAttribute("class","Alert");
     Checked.setAttribute("id","Warning"+i+x);
+    
+    $("#signal"+i+x).css("opacity","100%");
 
     return Checked;
 }

@@ -1,12 +1,28 @@
 body{
+    transition: 1.5s;
+
     background-color: rgb(2, 7, 29);
     text-align: center;
     justify-content: center;
     background-position: fixed;
 }
 
+#day_night img{
+
+    cursor: pointer;
+    background-size: 10px;
+    background: radial-gradient(200px ,rgb(51, 59, 104),transparent 20%);
+    height: 100px;
+    width: 100px;
+    display:inline-block;
+    position:absolute;
+    left: 2px;
+}
+#day_night img:hover{
+    background: radial-gradient(250px ,rgb(118, 126, 171),transparent 20%);
+}
 .line{
-    transition: 0.3s;
+    transition: 0.5s;
     opacity: 30%;
     background-color: rgb(2, 9, 30);
     margin: 3%;
@@ -21,7 +37,7 @@ body{
 
 .line:hover{
     top: 0%;
-    transition: 1s;
+    transition: 0.3s;
     width: 25%;
     height: 100%;
     opacity: 100%;
@@ -40,6 +56,8 @@ body{
 }
 
 .box{
+    transition: 0.3s;
+
     opacity: 80%;
     display: block;
     margin-top: 1%;
@@ -83,7 +101,7 @@ body{
     color: white;
     border-radius: 3px;
     font-size: 100%;
-    background-color: rgb(12, 60, 96);
+    background-color: rgb(9, 155, 121);
 }
 
 .okBut:hover{
@@ -106,8 +124,27 @@ body{
     background-color: rgb(148, 17, 63);
 }
 
+.PF{
+    overflow: hidden;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 10px;
+    border-radius: 10%;
+    border-style: none;
+    background: radial-gradient(#7003a7, #14036b);    background-color: blue;
+    border-width: 2px;
+    height: 22px;
+    width: 30px;
+}
+.PF:hover{
+    cursor: pointer;
+    background: radial-gradient(#5c2876, #7467b0);    background-color: blue;
+
+}
+
 .note{
-    z-index: 10;
     color: rgb(0, 0, 0);
     font-size:10px;
     border-style: solid;
@@ -125,14 +162,15 @@ body{
 .note:hover{
     cursor: pointer;
     position: relative;
-    z-index: 1;
     background-color: white;
 }
 
 .signal{
-    display:inline-flex;
-    height: 5px;
-    width: 10%;
+    margin-top: 5px;
+    position: absolute;
+    display: inline-flex;
+    height: 20px;
+    width: 2.4%;
 }
 
 .buttonHist{
@@ -200,10 +238,26 @@ body{
     width: 50px;
     height: 50px;
     background-size: 50px;
-
     background-image: url("/static/images/Rewind.png");
 }
 #Rewind:hover{
     background-color: rgb(123, 129, 158);
     transition: 0.5s;
+}
+.day-mode{
+    transition: 1.5s;
+    background-color: rgb(166, 175, 182);
+    color: black;
+}
+.day-mode .line{
+    background-color:  rgb(166, 175, 182);
+
+    color: black;
+}
+.day-mode .Date{
+    color: black;
+}
+
+.day-mode .Datelist{
+    color: black;
 }

@@ -13,6 +13,9 @@
     <link rel="stylesheet" href= "{{ url_for('static',filename='styles/style.css') }}">
     <script src="{{url_for('static',filename='Client.js')}}"></script>
     <body>
+        <div id="day_night" onclick="myFunction()"> 
+            <img src="/static/images/DayNight.png" alt="">
+        </div>
         <div id="headDate" class="Date">
             {% if datenow %}
             {{ datenow }}   
@@ -25,6 +28,12 @@
         <div id="Line4" class="line" style="display: none;"></div>
         <div id="Line5" class="line" style="display: none;"></div>
 
-
+        <script>
+            function myFunction() {
+               var element = document.body;
+               element.classList.toggle("day-mode");
+            }
+            </script>
 </body>
+
 </html>

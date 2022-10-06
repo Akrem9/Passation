@@ -88,13 +88,14 @@ def updateFromdate(date):
     datenow=date
     machines_state = machine_state.query.filter_by(date=datenow).all()
     machines = machine.query.all()
-
+    datetoday = str(datetime.now().year).zfill(4) + '-' + str(datetime.now().month).zfill(2) + '-' + str(datetime.now().day).zfill(2)
+    print(datetoday==datenow)
+    edit = (datenow == datetoday)
     dataStream = {}
     for mach in machines:
         mach_state = machine_state.query.filter_by(Machine = mach.id,date=datenow ).first()
         pr = problem.query.filter_by(id = mach_state.Problem).first()
-        print(mach_state.State)
-        dataStream[str(mach.line)+','+str(mach.row)] = {'Reference':mach.reference,'State':mach_state.State,'Note':pr.Note,'Tampon':pr.Tampon,'Measurement':pr.Measurement,'Procedure':pr.Procedure,'Visual':pr.Visual}
+        dataStream[str(mach.line)+','+str(mach.row)] = {'edit':edit,'Reference':mach.reference,'State':mach_state.State,'Note':pr.Note,'Tampon':pr.Tampon,'Measurement':pr.Measurement,'Procedure':pr.Procedure,'Visual':pr.Visual}
     emit('bootData',dataStream)
 
 
@@ -122,8 +123,7 @@ def bootRequest():
     for mach in machines:
         mach_state = machine_state.query.filter_by(Machine = mach.id,date=datenow ).first()
         pr = problem.query.filter_by(id = mach_state.Problem).first()
-        print(mach_state.State)
-        dataStream[str(mach.line)+','+str(mach.row)] = {'Reference':mach.reference,'State':mach_state.State,'Note':pr.Note,'Tampon':pr.Tampon,'Measurement':pr.Measurement,'Procedure':pr.Procedure,'Visual':pr.Visual}
+        dataStream[str(mach.line)+','+str(mach.row)] = {'edit':True,'Reference':mach.reference,'State':mach_state.State,'Note':pr.Note,'Tampon':pr.Tampon,'Measurement':pr.Measurement,'Procedure':pr.Procedure,'Visual':pr.Visual}
 
     emit('bootData',dataStream)
 
