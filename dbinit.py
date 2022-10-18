@@ -43,11 +43,12 @@ class Date(db.Model):
 
 
 
-def setState(reference,state,date):
+def setState(reference,state,date,procedure):
     print(state)
     id = machine.query.filter_by(reference=reference).first().id
     mach_state = machine_state.query.filter_by(Machine=id,date=date).first()
     mach_state.State = state
+    problem.query.filter_by(id=mach_state.Problem).first().Procedure = procedure
     db.session.commit()
 
 
@@ -55,8 +56,9 @@ def setNote(line,row,note,date):
     mach_id = machine.query.filter_by(line=line,row=row).first().id
     problem_id = machine_state.query.filter_by(Machine=mach_id,date=date).first().problem.id
     problem.query.filter_by(id=problem_id).first().Note = note
+    procedure = problem.query.filter_by(id=problem_id).first().Procedure
     db.session.commit()
-    return machine_state.query.filter_by(Machine=mach_id,date=date).first().State
+    return machine_state.query.filter_by(Machine=mach_id,date=date).first().State,procedure
 
 
 

@@ -44,10 +44,15 @@ class communicator{
                     display_green(i,x);
                 }
                 else{
-                    display_grey(i,x);
+                    if (data['Procedure']==true){
+                        display_grey(i,x);
+                    }
+                    else{
+                        display_disabled(i,x);
+                    }
                 }
                 try{
-                    setupNoteBehav(dataStream[i+','+x]['Note'],i,x);
+                    setupNoteBehav(dataStream[i+','+x]['Note'],i,x,data['state'],data['Procedure']);
                 }
                 catch{}
             }
@@ -59,7 +64,7 @@ class communicator{
             let x = data['row'];
             document.getElementById("note"+i+x).innerHTML=data['content'];
             try{
-                setupNoteBehav(data['content'],i,x,data['state']);
+                setupNoteBehav(data['content'],i,x,data['state'],data['Procedure']);
             }
             catch{}
         })
@@ -94,7 +99,13 @@ class communicator{
             if(e.which == 13) {
                 if (document.activeElement.className=="note"){
                     socket.emit("updateNote",{'content':document.activeElement.innerHTML,'line':document.activeElement.attributes.line.value,'row':document.activeElement.attributes.row.value});
+                    if(document.activeElement.innerHTML.length > 0){
+                        let i = parseInt(document.activeElement.attributes.line.value);
+                        let x = parseInt(document.activeElement.attributes.row.value);
+                        let reference = document.getElementById("machineName"+i+x).innerHTML;
+                        $("#PF"+i+x).trigger("click");                    }
                 }
+
                 $('*').blur();
             }
         });
@@ -232,12 +243,20 @@ function total_draw(dataStream){
                     PF.setAttribute("id","PF"+i+x);
                     PF.innerHTML = "PF";
         
+
+                    var MF = document.createElement("button");
+                    MF.setAttribute("class","MF");
+                    MF.setAttribute("id","MF"+i+x);
+                    MF.innerHTML = "";
+
+
                     Buttons.setAttribute("class","buttons");
                     Buttons.setAttribute("id","buttons"+i+x);
         
                     Buttons.appendChild(Okbutton);
                     Buttons.appendChild(Notbutton);
                     Buttons.appendChild(PF);
+                    Buttons.appendChild(MF);
                 }
                  }
                 catch{}
@@ -289,8 +308,15 @@ function total_draw(dataStream){
                     var Checked = display_green(i,x,box);
                     box.appendChild(Checked);
                 }else{
-                    var Checked = display_grey(i,x);
-                    box.appendChild(Checked);
+                    if(dataStream[i+','+x]['Procedure']==false){
+                        var Checked = display_disabled(i,x);
+                        box.appendChild(Checked);
+                    }
+                    else{
+                        var Checked = display_grey(i,x);
+                        box.appendChild(Checked);
+                    }
+
                 }
             }
             catch{
@@ -298,7 +324,7 @@ function total_draw(dataStream){
             }
             //Note on hover if not empty scale up
             try{
-                setupNoteBehav(dataStream[i+','+x]['Note'],i,x,dataStream[i+','+x]['State']);
+                setupNoteBehav(dataStream[i+','+x]['Note'],i,x,dataStream[i+','+x]['State'],dataStream[i+','+x]['Procedure']);
             }
             catch{}
             try{setup_behavior(dataStream[i+','+x]['Reference'],i,x,dataStream);}
@@ -312,22 +338,26 @@ function total_draw(dataStream){
 }
 function setup_behavior(reference,i,x,box,dataStream){
     $("#Ok"+i+x).click(function(){
-        socket.emit("stateChange",{'state':true,'reference':reference,'line':i,'row':x});
+        socket.emit("stateChange",{'state':true,'reference':reference,'line':i,'row':x,'Procedure':true});
         $("#note"+i+x).focus();
 
     });
     $("#notBut"+i+x).click(function(){
-        socket.emit("stateChange",{'state':false,'reference':reference,'line':i,'row':x});
+        socket.emit("stateChange",{'state':false,'reference':reference,'line':i,'row':x,'Procedure':true});
         $("#note"+i+x).focus();
 
     });
 
     $("#PF"+i+x).click(function(){
-        socket.emit("stateChange",{'state':null,'reference':reference,'line':i,'row':x});
+        socket.emit("stateChange",{'state':null,'reference':reference,'line':i,'row':x,'Procedure':true});
         $("#note"+i+x).focus();
     });
+
+    $("#MF"+i+x).click(function(){
+        socket.emit("stateChange",{'state':null,'reference':reference,'line':i,'row':x,'Procedure':false});
+    });
 }
-function setupNoteBehav(Note,i,x,State){
+function setupNoteBehav(Note,i,x,State,procedure){
     try{
         if (Note.length!=0){
             $("#box"+i+x).css("opacity","100%");
@@ -348,10 +378,15 @@ function setupNoteBehav(Note,i,x,State){
             $("#note"+i+x).on("mouseover",function(){$(this).css({transform:"scale(1)"});})
         }
         if (State==true ){
-            $("#signal"+i+x).css("background-color","rgb(153, 153, 0)");
+            display_green(i,x);
         }
-        if (State==null){
+        if (State==null && procedure==true){
             display_grey(i,x);
+        }
+        else{
+            if(procedure==false && State==null){
+                display_disabled(i,x);
+            }
         }
 }
     catch{}
@@ -362,6 +397,17 @@ function display_red(i,x){
     $("#signal"+i+x).css("background-color","rgb(192, 80, 89)");  
     $("#box"+i+x).css("background-color","rgb(192, 80, 89)");  
     $("#box"+i+x).css("opacity","100%");
+
+    $("#notBut"+i+x).css("opacity","100%");
+    $("#Ok"+i+x).css("opacity","30%");
+    $("#PF"+i+x).css("opacity","30%");
+    $("#MF"+i+x).css("opacity","15%");
+
+    
+    $("#notBut"+i+x).css({transform:"scale(1)"});
+    $("#Ok"+i+x).css({transform:"scale(0.7)"});
+    $("#PF"+i+x).css({transform:"scale(0.7)"});
+    $("#MF"+i+x).css({transform:"scale(0.7)"});
 
 
     //console.log("box"+i+x);  
@@ -374,20 +420,72 @@ function display_red(i,x){
 function display_grey(i,x){
     $("#box"+i+x).css("background-color","rgb(47, 61, 74)");  
     $("#signal"+i+x).css("opacity","0%");
-    $("#box"+i+x).css("opacity","30%");
+    $("#box"+i+x).css("opacity","100%");
+
+    $("#notBut"+i+x).css("opacity","30%");
+    $("#Ok"+i+x).css("opacity","30%");
+    $("#PF"+i+x).css("opacity","100%");
+    $("#MF"+i+x).css("opacity","15%");
+
+    
+    $("#notBut"+i+x).css({transform:"scale(0.7)"});
+    $("#Ok"+i+x).css({transform:"scale(0.7)"});
+    $("#PF"+i+x).css({transform:"scale(1)"});
+    $("#MF"+i+x).css({transform:"scale(0.7)"});
+
     if(document.getElementById("note"+i+x).innerHTML.length > 0){
         $("#signal"+i+x).css("background-color","rgb(153, 153, 0)");
         $("#box"+i+x).css("opacity","100%");
         $("#signal"+i+x).css("opacity","100%");
-        $("#box"+i+x).css("background-color","rgb(77, 80, 90)");  
+
+    }
+}
+
+function display_disabled(i,x){
+    $("#box"+i+x).css("background-color","rgb(47, 61, 74)");  
+    $("#signal"+i+x).css("opacity","0%");
+    $("#box"+i+x).css("opacity","30%");
+
+    $("#notBut"+i+x).css("opacity","30%");
+    $("#Ok"+i+x).css("opacity","30%");
+    $("#PF"+i+x).css("opacity","30%");
+    $("#MF"+i+x).css("opacity","100%");
+
+    
+    $("#notBut"+i+x).css({transform:"scale(0.7)"});
+    $("#Ok"+i+x).css({transform:"scale(0.7)"});
+    $("#PF"+i+x).css({transform:"scale(0.7)"});
+    $("#MF"+i+x).css({transform:"scale(1)"});
+
+    if(document.getElementById("note"+i+x).innerHTML.length > 0){
+        $("#signal"+i+x).css("background-color","rgb(153, 153, 0)");
+        $("#box"+i+x).css("opacity","100%");
+        $("#signal"+i+x).css("opacity","100%");
 
     }
 }
 
 function display_green(i,x){
-    $("#box"+i+x).css("opacity","55%");
-    $("#signal"+i+x).css("background-color","rgb(74, 164, 74)");
-    $("#box"+i+x).css("background-color","rgb(47, 61, 74)");  
+    $("#box"+i+x).css("opacity","95%");
+    $("#signal"+i+x).css("background-color","rgb(0, 102, 0)");
+    $("#box"+i+x).css("background-color","rgb(0, 102, 0)");  
+
+    $("#notBut"+i+x).css("opacity","30%");
+    $("#Ok"+i+x).css("opacity","100%");
+    $("#PF"+i+x).css("opacity","30%");
+    $("#MF"+i+x).css("opacity","15%");
+
+
+    $("#notBut"+i+x).css({transform:"scale(0.7)"});
+    $("#Ok"+i+x).css({transform:"scale(1)"});
+    $("#PF"+i+x).css({transform:"scale(0.7)"});
+    $("#MF"+i+x).css({transform:"scale(0.7)"});
+
+
+
+    if(document.getElementById("note"+i+x).innerHTML.length > 0){
+        $("#signal"+i+x).css("background-color","rgb(153, 153, 0)");
+    }
 
     //console.log("box"+i+x);
     var Checked = document.createElement("div");

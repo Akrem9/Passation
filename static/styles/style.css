@@ -91,7 +91,7 @@ body{
 .buttons{
     position: absolute;
     text-align: center;
-    width: 7%;
+    width: 10%;
     display: inline-block;
 }
 
@@ -144,6 +144,26 @@ body{
 
 }
 
+
+.MF{
+    background-image: url("/static/images/disabled.png");;
+
+    justify-content: center;
+    text-align: center;
+    font-weight: bold;
+    background-size: 100%;
+    border-radius: 10%;
+    border-style: none;
+    border-width: 2px;
+    height: 20px;
+    width: 20px;
+}
+
+.MF:hover{
+    cursor: pointer;
+    border-color: #7003a7;
+    border-style: solid;
+}
 .note{
     color: rgb(0, 0, 0);
     font-size:10px;

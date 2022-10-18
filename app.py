@@ -1,22 +1,18 @@
 from markupsafe import escape
 from flask import Flask,render_template,session,redirect,url_for,request,send_from_directory
 from flask_session import Session
-from flask_socketio import SocketIO, emit, send
-from flask_bootstrap import Bootstrap
+from flask_socketio import SocketIO, emit
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, DateField, SelectField
-from wtforms.validators import InputRequired, Email, Length
-from flask_sqlalchemy import SQLAlchemy
+from wtforms import PasswordField
+from wtforms.validators import InputRequired,Length
 from dbinit import *
 from flask import flash
-from flask_mail import Mail,Message
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 
 
 app = Flask(__name__)
-app.config['DEBUG'] = False
+app.config['DEBUG'] = True
 app.config['SECRET_KEY'] = 'mysecret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -46,8 +42,8 @@ def updateNote(data):
         row=int(data['row'])
         note=data['content']
         datenow = str(datetime.now().year).zfill(4) + '-' + str(datetime.now().month).zfill(2) + '-' + str(datetime.now().day).zfill(2)
-        State = setNote(line,row,note,datenow)
-        socketio.emit('updateNote',{'content':note,'line':line,'row':row,'state':State})
+        State,procedure = setNote(line,row,note,datenow)
+        socketio.emit('updateNote',{'content':note,'line':line,'row':row,'state':State,'Procedure':procedure})
     except:
         return  0
 @socketio.on('stateChange')
@@ -55,10 +51,11 @@ def stateChange(data):
         try:
             reference = data['reference']
             state = data['state']
+            procedure = data['Procedure']
             datenow = str(datetime.now().year).zfill(4) + '-' + str(datetime.now().month).zfill(2) + '-' + str(datetime.now().day).zfill(2)
 
-            setState(reference,state,datenow)
-            socketio.emit('updateState',{'reference':reference,'state':state,'line':data['line'],'row':data['row']})
+            setState(reference,state,datenow,procedure)
+            socketio.emit('updateState',{'reference':reference,'state':state,'line':data['line'],'row':data['row'],'Procedure':data['Procedure']})
         except:
             pass
 
@@ -95,7 +92,7 @@ def updateFromdate(date):
     for mach in machines:
         mach_state = machine_state.query.filter_by(Machine = mach.id,date=datenow ).first()
         pr = problem.query.filter_by(id = mach_state.Problem).first()
-        dataStream[str(mach.line)+','+str(mach.row)] = {'edit':edit,'Reference':mach.reference,'State':mach_state.State,'Note':pr.Note,'Tampon':pr.Tampon,'Measurement':pr.Measurement,'Procedure':pr.Procedure,'Visual':pr.Visual}
+        dataStream[str(mach.line)+','+str(mach.row)] = {'edit':edit,'Reference':mach.reference,'State':mach_state.State,'Note':pr.Note,'Tampon':pr.Tampon,'Measurement':pr.Measurement,'Procedure':pr.Procedure,'Visual':pr.Visual,'Procedure':pr.Procedure}
     emit('bootData',dataStream)
 
 
@@ -138,7 +135,7 @@ def Verification():
         if form.validate_on_submit():
             password = request.form.get('password')
             print(password)
-            if password == 'STAAMP8279':
+            if password == '123456*':
                 session['id'] = 1
                 return redirect(url_for('index'))
             else:
