@@ -31,7 +31,7 @@ def index():
         return redirect(url_for('Verification'))
 
 class LoginForm(FlaskForm):
-    password = PasswordField('password',validators=[InputRequired(),Length(min=8,max=40)])
+    password = PasswordField('password',validators=[InputRequired(),Length(min=5,max=40)])
 
 
 @socketio.on('updateNote')
