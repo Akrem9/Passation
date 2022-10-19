@@ -23,7 +23,7 @@ body{
 }
 .line{
     transition: 0.5s;
-    opacity: 30%;
+    opacity: 50%;
     background-color: rgb(2, 9, 30);
     margin: 3%;
     margin-top: 0.5%;

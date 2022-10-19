@@ -103,7 +103,10 @@ class communicator{
                         let i = parseInt(document.activeElement.attributes.line.value);
                         let x = parseInt(document.activeElement.attributes.row.value);
                         let reference = document.getElementById("machineName"+i+x).innerHTML;
-                        $("#PF"+i+x).trigger("click");                    }
+                        if(global_tst[i+','+x].Procedure==false){
+                            $("#PF"+i+x).trigger("click");                    
+                        }
+                    }
                 }
 
                 $('*').blur();
@@ -227,7 +230,7 @@ function total_draw(dataStream){
             var Buttons = document.createElement("div");
 
             try{
-                if(dataStream[i+','+x]['edit']==true){
+                
                     var Okbutton = document.createElement("button");
                     Okbutton.setAttribute("class","okBut");
                     Okbutton.setAttribute("id","Ok"+i+x);
@@ -257,7 +260,7 @@ function total_draw(dataStream){
                     Buttons.appendChild(Notbutton);
                     Buttons.appendChild(PF);
                     Buttons.appendChild(MF);
-                }
+                
                  }
                 catch{}
 
@@ -327,7 +330,9 @@ function total_draw(dataStream){
                 setupNoteBehav(dataStream[i+','+x]['Note'],i,x,dataStream[i+','+x]['State'],dataStream[i+','+x]['Procedure']);
             }
             catch{}
-            try{setup_behavior(dataStream[i+','+x]['Reference'],i,x,dataStream);}
+            try{
+                if(dataStream[i+','+x]['edit']==true){
+                setup_behavior(dataStream[i+','+x]['Reference'],i,x,dataStream);}}
             catch{}
             //Loadhistory to Line 5 of History
             $("#buttonHist"+i+x).click(function(){
@@ -338,22 +343,34 @@ function total_draw(dataStream){
 }
 function setup_behavior(reference,i,x,box,dataStream){
     $("#Ok"+i+x).click(function(){
+        global_tst[i+','+x].Procedure = true;
+        global_tst[i+','+x].State = true;
+
         socket.emit("stateChange",{'state':true,'reference':reference,'line':i,'row':x,'Procedure':true});
         $("#note"+i+x).focus();
 
     });
     $("#notBut"+i+x).click(function(){
+        global_tst[i+','+x].Procedure = true;
+        global_tst[i+','+x].State = false;
+
         socket.emit("stateChange",{'state':false,'reference':reference,'line':i,'row':x,'Procedure':true});
         $("#note"+i+x).focus();
 
     });
 
     $("#PF"+i+x).click(function(){
+        global_tst[i+','+x].Procedure = true;
+        global_tst[i+','+x].State = null;
+
         socket.emit("stateChange",{'state':null,'reference':reference,'line':i,'row':x,'Procedure':true});
         $("#note"+i+x).focus();
     });
 
     $("#MF"+i+x).click(function(){
+        global_tst[i+','+x].Procedure = false;
+        global_tst[i+','+x].State = null;
+
         socket.emit("stateChange",{'state':null,'reference':reference,'line':i,'row':x,'Procedure':false});
     });
 }
@@ -399,9 +416,9 @@ function display_red(i,x){
     $("#box"+i+x).css("opacity","100%");
 
     $("#notBut"+i+x).css("opacity","100%");
-    $("#Ok"+i+x).css("opacity","30%");
-    $("#PF"+i+x).css("opacity","30%");
-    $("#MF"+i+x).css("opacity","15%");
+    $("#Ok"+i+x).css("opacity","60%");
+    $("#PF"+i+x).css("opacity","60%");
+    $("#MF"+i+x).css("opacity","55%");
 
     
     $("#notBut"+i+x).css({transform:"scale(1)"});
@@ -422,10 +439,10 @@ function display_grey(i,x){
     $("#signal"+i+x).css("opacity","0%");
     $("#box"+i+x).css("opacity","100%");
 
-    $("#notBut"+i+x).css("opacity","30%");
-    $("#Ok"+i+x).css("opacity","30%");
+    $("#notBut"+i+x).css("opacity","60%");
+    $("#Ok"+i+x).css("opacity","60%");
     $("#PF"+i+x).css("opacity","100%");
-    $("#MF"+i+x).css("opacity","15%");
+    $("#MF"+i+x).css("opacity","40%");
 
     
     $("#notBut"+i+x).css({transform:"scale(0.7)"});
@@ -444,11 +461,11 @@ function display_grey(i,x){
 function display_disabled(i,x){
     $("#box"+i+x).css("background-color","rgb(47, 61, 74)");  
     $("#signal"+i+x).css("opacity","0%");
-    $("#box"+i+x).css("opacity","30%");
+    $("#box"+i+x).css("opacity","50%");
 
-    $("#notBut"+i+x).css("opacity","30%");
-    $("#Ok"+i+x).css("opacity","30%");
-    $("#PF"+i+x).css("opacity","30%");
+    $("#notBut"+i+x).css("opacity","60%");
+    $("#Ok"+i+x).css("opacity","60%");
+    $("#PF"+i+x).css("opacity","60%");
     $("#MF"+i+x).css("opacity","100%");
 
     
